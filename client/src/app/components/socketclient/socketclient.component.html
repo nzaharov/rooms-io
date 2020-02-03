@@ -1,0 +1,25 @@
+<p>socketclient works!</p>
+<ng-template #connectPlayer>
+    <input [(ngModel)]="playerId" />
+    <button (click)="connect()">Connect</button>
+</ng-template>
+
+<div *ngIf="isConnected; else connectPlayer">
+    <ul>
+        <li *ngFor="let room of availableRooms$|async">{{room}}</li>
+    </ul>
+    <input [(ngModel)]="roomName" />
+
+    <button (click)="createRoom()">Create</button>
+    <button (click)="joinRoom()">Join</button>
+
+    <div>
+        <input #messageField />
+        <button (click)="sendMessage(messageField.value)">Send</button>
+    </div>
+
+    <div>
+        <input #stateField />
+        <button (click)="changeState(stateField.value)">Change</button>
+    </div>
+</div>
