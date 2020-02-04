@@ -12,7 +12,6 @@ process.on('message', ({ event, msg }) => {
             endSelf(loop);
             break;
     }
-    console.log(event);
 });
 
 loop = setInterval(() => {

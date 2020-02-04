@@ -77,4 +77,10 @@ export class SocketclientComponent implements OnInit {
     }
   }
 
+  handleGameOutput(event){
+    if(event && this.socket) {
+      this.socket.emit('stateChange', { message: event })
+    }
+  }
+
 }

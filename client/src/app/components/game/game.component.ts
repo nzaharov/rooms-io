@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { Game, Types } from 'phaser';
 import { MainScene } from 'src/app/game/main-scene';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -10,15 +11,20 @@ import { MainScene } from 'src/app/game/main-scene';
 export class GameComponent implements OnInit {
   game: Game;
   config: Types.Core.GameConfig;
+  @Output() output = new EventEmitter<any>();
 
   constructor() { }
 
   ngOnInit() {
+
+    const mainScene = new MainScene();
+    mainScene.getSceneOutput().subscribe((event) => this.output.emit(event));
+
     this.config = {
-      type: Phaser.AUTO,
-      height: 600,
+      type: Phaser.WEBGL,
+      height: 800,
       width: 800,
-      scene: [MainScene],
+      scene: [mainScene],
       parent: 'gameContainer',
       physics: {
         default: 'arcade',
