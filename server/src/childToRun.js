@@ -1,22 +1,26 @@
-let interval = null;
+let loop = null;
 
 const state = process.env.state || { text: 'unset' };
+const inputQueue = [];
 
 process.on('message', ({ event, msg }) => {
     switch (event) {
         case 'msg':
-            state.text = msg;
+            inputQueue.push(msg);
             break;
         case 'die':
-            endSelf(interval);
+            endSelf(loop);
             break;
     }
     console.log(event);
 });
 
-interval = setInterval(() => {
-    process.send({ msg: Date.now() });
-}, 1000);
+loop = setInterval(() => {
+    // process.send({ msg: Date.now() });
+    if (inputQueue.length) {
+        process.send({ msg: inputQueue.shift() });
+    }
+}, 1000 / 30);
 
 function endSelf(interval) {
     console.log('process dying')

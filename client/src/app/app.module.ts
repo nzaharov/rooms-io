@@ -5,11 +5,13 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { SocketclientComponent } from './components/socketclient/socketclient.component';
+import { GameComponent } from './components/game/game.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SocketclientComponent
+    SocketclientComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,
