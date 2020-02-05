@@ -36,7 +36,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.config = {
       type: Phaser.WEBGL,
       height: 800,
-      width: 800,
+      width: 1000,
       scene: [this.mainScene],
       parent: 'gameContainer',
       physics: {
