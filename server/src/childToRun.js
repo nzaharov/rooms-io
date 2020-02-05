@@ -1,6 +1,8 @@
 let loop = null;
 
-const state = process.env.state || { text: 'unset' };
+const state = {
+    units: []
+};
 const inputQueue = [];
 
 process.on('message', ({ event, msg }) => {
@@ -15,9 +17,15 @@ process.on('message', ({ event, msg }) => {
 });
 
 loop = setInterval(() => {
-    // process.send({ msg: Date.now() });
     if (inputQueue.length) {
-        process.send({ msg: inputQueue.shift() });
+
+        const action = inputQueue.shift();
+        if (action.event === 'newUnit') {
+            state.units.push(action.payload);
+
+            process.send({ msg: action });
+        }
+
     }
 }, 1000 / 30);
 

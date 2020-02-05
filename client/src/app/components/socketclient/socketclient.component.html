@@ -1,4 +1,3 @@
-<p>socketclient works!</p>
 <ng-template #connectPlayer>
     <input [(ngModel)]="playerId" />
     <button (click)="connect()">Connect</button>
@@ -17,11 +16,6 @@
         <input #messageField />
         <button (click)="sendMessage(messageField.value)">Send</button>
     </div>
-
-    <div>
-        <input #stateField />
-        <button (click)="changeState(stateField.value)">Change</button>
-    </div>
 </div>
 
-<app-game (output)="handleGameOutput($event)"></app-game>
+<app-game (output)="handleGameOutput($event)" [inputAction]="incomingAction"></app-game>

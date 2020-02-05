@@ -90,13 +90,14 @@ io.on('connection', (socket) => {
 
             workers[room.name] = new Worker();
             workerStateSubscriptions[room.name] = workers[room.name].output.subscribe((data) => {
-                io.in(room.name).emit('message', { message: data[0].msg });
+                io.in(room.name).emit('gameState', { message: data[0].msg });
             });
         }
     });
 
-    socket.on('stateChange', ({ message }) => {
+    socket.on('playerAction', ({ message }) => {
         const roomName = players[playerId].room;
+        // Maybe tag incoming actions with player id here
         if (workers[roomName]) {
             workers[roomName].sendMsg(message);
         }

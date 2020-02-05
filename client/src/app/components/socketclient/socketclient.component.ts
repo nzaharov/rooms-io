@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, fromEvent } from 'rxjs';
 import { pluck } from 'rxjs/operators';
 import * as io from 'socket.io-client';
+import { IAction } from 'src/app/game/interfaces/Action';
 
 @Component({
   selector: 'app-socketclient',
@@ -12,10 +13,12 @@ export class SocketclientComponent implements OnInit {
 
   private readonly serverURL = 'http://localhost:8080/';
   private socket: SocketIOClient.Socket;
+
   availableRooms$: Observable<string[]>;
   roomName: string = null;
   isConnected = false;
   playerId: string = '';
+  incomingAction: IAction;
 
   constructor() { }
 
@@ -38,7 +41,8 @@ export class SocketclientComponent implements OnInit {
       this.socket
         .on('p2Join', () => console.log('Player 2 joined'))
         .on('ready', () => console.log('ready'))
-        .on('message', ({ message }) => console.log(Date.now(), message))
+        .on('message', ({ message }) => console.log(message))
+        .on('gameState', ({ message }) => this.incomingAction = message)
         .on('err', ({ err }) => console.log('error: ', err))
         .on('disconnect', () => {
           this.isConnected = false
@@ -70,16 +74,9 @@ export class SocketclientComponent implements OnInit {
     }
   }
 
-
-  changeState(text: string) {
-    if (text && text !== '') {
-      this.socket.emit('stateChange', { message: text });
-    }
-  }
-
-  handleGameOutput(event){
-    if(event && this.socket) {
-      this.socket.emit('stateChange', { message: event })
+  handleGameOutput(event) {
+    if (event && this.socket) {
+      this.socket.emit('playerAction', { message: event })
     }
   }
 
