@@ -1,7 +1,7 @@
 import { Scene, GameObjects } from 'phaser';
 import { Subject, Observable } from 'rxjs';
 import { IAction } from './interfaces/Action';
-import IsoPlugin from 'phaser3-plugin-isometric';
+import IsoPlugin from 'phaser3-plugin-isometric'; // needs declaration file
 import { IsoUnit } from './game-objects/IsoUnit';
 
 export class MainScene extends Scene {
@@ -9,7 +9,7 @@ export class MainScene extends Scene {
     private sceneOutput$: Subject<any>;
     private inputQueue: IAction[] = [];
 
-    private isoGroup;
+    private isoGroup; // type?
 
     private units: IsoUnit[] = [];
 
@@ -19,7 +19,6 @@ export class MainScene extends Scene {
         this.sceneOutput$ = new Subject<any>();
     }
 
-    
     preload() {
         this.load.scenePlugin({
             key: 'IsoPlugin',
@@ -37,7 +36,6 @@ export class MainScene extends Scene {
 
     create() {
         this.map = this.add.image(400, 400, 'map').setInteractive();
-        // this.map.on('pointerdown', (e) => this.addUnit(e.x, e.y));
         this.isoGroup = this.add.group();
 
         (this as any).iso.projector.origin.setTo(0.5, 0.3);
@@ -46,6 +44,10 @@ export class MainScene extends Scene {
 
     update() {
         this.handleQueuedCommands();
+
+        this.units.forEach((unit) => {
+            unit.update();
+        });
 
     }
 
@@ -64,7 +66,7 @@ export class MainScene extends Scene {
 
             if (action.event === 'newUnit') {
                 if (!this.units.find((unit) => unit.id === payload.id)) {
-                    this.units.push(this.createUnit(payload.x, payload.y, payload.id));
+                    this.units.push(this.createUnit(payload.x, payload.y, false, payload.id));
                 }
             }
         }
@@ -77,14 +79,14 @@ export class MainScene extends Scene {
                 tile.scale = 2;
                 tile.setInteractive();
 
-                tile.on('pointerover', function () {
-                    this.setTint(0x86bfda);
-                    this.isoZ += 3;
+                tile.on('pointerover', () => {
+                    tile.setTint(0x16f84a);
+                    tile.isoZ += 3;
                 });
 
-                tile.on('pointerout', function () {
-                    this.clearTint();
-                    this.isoZ -= 3;
+                tile.on('pointerout', () => {
+                    tile.clearTint();
+                    tile.isoZ -= 3;
                 });
 
                 tile.on('pointerup', () => {
@@ -95,15 +97,14 @@ export class MainScene extends Scene {
     }
 
     private addUnit(x: number, y: number) {
-        const unit = this.createUnit(x, y);
+        const unit = this.createUnit(x, y, true);
         this.units.push(unit);
         this.sceneOutput$.next({ event: 'newUnit', payload: { id: unit.id, x, y } });
     }
 
-    private createUnit(x: number, y: number, id?: string): IsoUnit {
+    private createUnit(x: number, y: number, isPlayerOne: boolean, id?: string): IsoUnit {
         const sprite = (this.add as any).isoSprite(x, y, 40, 'dude');
-        sprite.scale = 2;
-        return new IsoUnit(sprite, id);
+        return new IsoUnit(sprite, isPlayerOne, id);
     }
 
 }

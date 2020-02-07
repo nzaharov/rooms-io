@@ -19,6 +19,7 @@ export class SocketclientComponent implements OnInit {
   isConnected = false;
   playerId: string = '';
   incomingAction: IAction;
+  gameStarted: boolean = false;
 
   constructor() { }
 
@@ -39,13 +40,16 @@ export class SocketclientComponent implements OnInit {
     this.socket.once('connect', () => {
       this.availableRooms$ = fromEvent(this.socket, 'roomList').pipe(pluck('availableRooms'));
       this.socket
-        .on('p2Join', () => console.log('Player 2 joined'))
-        .on('ready', () => console.log('ready'))
+        .on('ready', () => {
+          console.log('game ready');
+          this.gameStarted = true;
+        })
         .on('message', ({ message }) => console.log(message))
         .on('gameState', ({ message }) => this.incomingAction = message)
         .on('err', ({ err }) => console.log('error: ', err))
         .on('disconnect', () => {
-          this.isConnected = false
+          this.gameStarted = false;
+          this.isConnected = false;
         });
 
       this.isConnected = true;

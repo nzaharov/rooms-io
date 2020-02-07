@@ -18,4 +18,4 @@
     </div>
 </div>
 
-<app-game (output)="handleGameOutput($event)" [inputAction]="incomingAction"></app-game>
+<app-game *ngIf="gameStarted" (output)="handleGameOutput($event)" [inputAction]="incomingAction"></app-game>

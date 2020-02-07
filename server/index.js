@@ -85,8 +85,7 @@ io.on('connection', (socket) => {
             players[playerId].room = roomName;
             clearInterval(roomFeed);
 
-            socket.emit('ready');
-            socket.to(roomName).emit('p2Join');
+            io.in(roomName).emit('ready');
 
             workers[room.name] = new Worker();
             workerStateSubscriptions[room.name] = workers[room.name].output.subscribe((data) => {
